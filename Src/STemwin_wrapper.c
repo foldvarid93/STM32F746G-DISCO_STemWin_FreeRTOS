@@ -826,6 +826,7 @@ static void CUSTOM_DrawBitmap32bpp(int LayerIndex, int x, int y, U8 const * p,
 static void TransferComplete(DMA2D_HandleTypeDef *hdma2d) {
 	TransferInProgress = 0;
 }
+
 void DMA2D_Init(void) {
 	/* Configure the DMA2D transfer complete callback mode */
 	hdma2d.XferCpltCallback = TransferComplete;
@@ -839,37 +840,21 @@ void DMA2D_Init(void) {
 	}
 
 }
-void GRAPHICS_IncTick(void) {
-	OS_TimeMS++;
-}
+
 void GRAPHICS_Init(void) {
-	//SDRAM init start
 	MX_FMC_Init();
 	BSP_SDRAM_Init();
-	//SDRAM init end
-	//DMA2D init start
-	//MX_DMA2D_Init();
-	//DMA2D_Init();
-	//DMA2D init end
-	//Touch panel init start
 #if   GUI_SUPPORT_TOUCH//if touch supported
 	TS_IO_Init();
 	if (BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize()) != TS_OK) {
 		while (1);
 	}
-	//BSP_TS_ITConfig();
-	//BSP_TS_ITClear();
-	//Touch panel init end
 #endif
-	/* Initialize the GUI */
-	GUI_Init();
-	/* Enable the multi-buffering functionality */
-	WM_MULTIBUF_Enable(1);
-	/* Activate the use of memory device feature */
-	/* USER CODE BEGIN WM_SetCreateFlags */
-	//WM_SetCreateFlags(WM_CF_MEMDEV);
-	/* USER CODE END WM_SetCreateFlags */
+	GUI_Init();/* Initialize the GUI */
+	WM_MULTIBUF_Enable(1);/* Enable the multi-buffering functionality */
+	//WM_SetCreateFlags(WM_CF_MEMDEV);	/* USER CODE BEGIN WM_SetCreateFlags */
 }
+
 void TouchUpdate(void) {
 	static GUI_PID_STATE TS_State = { 0, 0, 0, 0 };
 	TS_StateTypeDef ts;
