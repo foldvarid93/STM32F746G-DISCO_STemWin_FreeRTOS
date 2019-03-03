@@ -231,7 +231,7 @@ static void GUIThread(void const * argument)
   while(1) {
 	NewData();
 	GUI_Exec();
-    osDelay(10); /* Nothing left to do for the moment ... Idle processing */
+    osDelay(5); /* Nothing left to do for the moment ... Idle processing */
   }
 }
 static void TimerCallback(void const *n)
