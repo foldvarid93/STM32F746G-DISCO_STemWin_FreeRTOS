@@ -126,7 +126,6 @@ int main(void)
 
   /* Configure the system clock */
   SystemClock_Config();
-
   /* USER CODE BEGIN SysInit */
 
   /* USER CODE END SysInit */
@@ -135,7 +134,6 @@ int main(void)
   MX_GPIO_Init();
   MX_CRC_Init();
   /* USER CODE BEGIN 2 */
-  GRAPHICS_Init();
   osThreadDef(GUI_Thread, GUIThread, osPriorityNormal, 0, 2 * 1024);
   osThreadCreate (osThread(GUI_Thread), NULL);
   osKernelStart ();
@@ -214,20 +212,13 @@ void SystemClock_Config(void)
   }
 }
 /* USER CODE BEGIN 4 */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+void vApplicationTickHook( void )
 {
-  /* USER CODE BEGIN Callback 0 */
-
-  /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM6) {
-    HAL_IncTick();
-  }
-  /* USER CODE BEGIN Callback 1 */
-
-  /* USER CODE END Callback 1 */
+	HAL_IncTick();
 }
 static void GUIThread(void const * argument)
 {
+	GRAPHICS_Init();
 	MainTask();
   /* Create Touch screen Timer */
   osTimerDef(TS_Timer, TimerCallback);
