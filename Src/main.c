@@ -108,12 +108,6 @@ static void ADCThread(void *pvParameters) {
 static void GUIThread(void *pvParameters) {
 	GRAPHICS_Init();
 	MainTask();
-
-	//osTimerDef(TS_Timer, TimerCallback); /* Create Touch screen Timer */
-	//lcd_timer = osTimerCreate(osTimer(TS_Timer), osTimerPeriodic, (void *) 0);
-
-	//osTimerStart(lcd_timer, 100); /* Start the TS Timer */
-
 	while (1) { /* Gui background Task */
 		NewData();
 		GUI_Exec();
@@ -127,7 +121,7 @@ static void GUIThread(void *pvParameters) {
 	}
 }*/
 static void TimerCallback(TimerHandle_t xTimer) {
-	TouchUpdate();
+	//TouchUpdate();
 }
 void vApplicationTickHook(void) {
 	HAL_IncTick();
@@ -167,11 +161,7 @@ int main(void) {
 	MX_GPIO_Init();
 	MX_CRC_Init();
 	MX_ADC3_Init();
-
 	/* USER CODE BEGIN 2 */
-	//osThreadCreate(osThread(GUI_Thread), NULL);
-	//osThreadCreate(osThread(ADC_Thread), NULL);
-	//osKernelStart();
 
 	xTaskCreate(GUIThread, ( char *) "GUI_Thread", configMINIMAL_STACK_SIZE, NULL, configMAX_PRIORITIES-1, NULL);
 	xTaskCreate(ADCThread, ( char *) "ACD_Thread", configMINIMAL_STACK_SIZE, NULL, configMAX_PRIORITIES-2, NULL);
