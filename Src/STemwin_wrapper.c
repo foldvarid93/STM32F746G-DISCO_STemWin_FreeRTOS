@@ -849,14 +849,13 @@ void GRAPHICS_Init(void) {
 	if (BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize()) != TS_OK) {
 		while (1);
 	}
-	//BSP_TS_GetState(&TS_State);
 #endif
 	GUI_Init();/* Initialize the GUI */
 	WM_MULTIBUF_Enable(1);/* Enable the multi-buffering functionality */
 	//WM_SetCreateFlags(WM_CF_MEMDEV);	/* USER CODE BEGIN WM_SetCreateFlags */
 }
 
-void TouchUpdate2(void) {
+void TouchUpdate(void) {
 	static GUI_PID_STATE GUI_TS_State = { 0, 0, 0, 0 };
 	//TS_StateTypeDef TS_State;
 	uint16_t xDiff, yDiff;
@@ -889,7 +888,7 @@ void TouchUpdate2(void) {
 		}
 	}
 }
-void TouchUpdate(void)
+void TouchUpdate2(void)
 {
   static GUI_PID_STATE TS_State = {0, 0, 0, 0};
   __IO TS_StateTypeDef  ts;
