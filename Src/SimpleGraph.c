@@ -196,8 +196,6 @@ static void _cbBk(WM_MESSAGE * pMsg) {
  *       MainTask
  */
 void MainTask(void) {
-	GUI_Init();
-	WM_MULTIBUF_Enable(1);
 	WM_SetCallback(WM_HBKWIN, _cbBk);
 	GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
 }

@@ -121,7 +121,7 @@
 
 /* From SDRAM */
 #define LCD_LAYER0_FRAME_BUFFER  ((int)0xC0000000)
-
+TS_StateTypeDef TS_State;
 /**
  * @}
  */
@@ -849,6 +849,7 @@ void GRAPHICS_Init(void) {
 	if (BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize()) != TS_OK) {
 		while (1);
 	}
+	BSP_TS_GetState(&TS_State);
 #endif
 	GUI_Init();/* Initialize the GUI */
 	WM_MULTIBUF_Enable(1);/* Enable the multi-buffering functionality */
@@ -856,35 +857,35 @@ void GRAPHICS_Init(void) {
 }
 
 void TouchUpdate(void) {
-	static GUI_PID_STATE TS_State = { 0, 0, 0, 0 };
-	TS_StateTypeDef ts;
+	static GUI_PID_STATE GUI_TS_State = { 0, 0, 0, 0 };
+	//TS_StateTypeDef TS_State;
 	uint16_t xDiff, yDiff;
 
-	BSP_TS_GetState(&ts);
+	BSP_TS_GetState(&TS_State);
 
-	if ((ts.touchX[0] >= LCD_GetXSize()) || (ts.touchY[0] >= LCD_GetYSize())) {
-		ts.touchX[0] = 0;
-		ts.touchY[0] = 0;
-		ts.touchDetected = 0;
+	if ((TS_State.touchX[0] >= LCD_GetXSize()) || (TS_State.touchY[0] >= LCD_GetYSize())) {
+		TS_State.touchX[0] = 0;
+		TS_State.touchY[0] = 0;
+		TS_State.touchDetected = 0;
 	}
 
-	xDiff = (TS_State.x > ts.touchX[0]) ?
-			(TS_State.x - ts.touchX[0]) : (ts.touchX[0] - TS_State.x);
-	yDiff = (TS_State.y > ts.touchY[0]) ?
-			(TS_State.y - ts.touchY[0]) : (ts.touchY[0] - TS_State.y);
+	xDiff = (GUI_TS_State.x > TS_State.touchX[0]) ?
+			(GUI_TS_State.x - TS_State.touchX[0]) : (TS_State.touchX[0] - GUI_TS_State.x);
+	yDiff = (GUI_TS_State.y > TS_State.touchY[0]) ?
+			(GUI_TS_State.y - TS_State.touchY[0]) : (TS_State.touchY[0] - GUI_TS_State.y);
 
-	if ((TS_State.Pressed != ts.touchDetected) || (xDiff > 10)
+	if ((GUI_TS_State.Pressed != TS_State.touchDetected) || (xDiff > 10)
 			|| (yDiff > 10)) {
-		TS_State.Pressed = ts.touchDetected;
-		//TS_State.Layer = SelLayer;
-		if (ts.touchDetected) {
-			TS_State.x = ts.touchX[0];
-			TS_State.y = ts.touchY[0];
-			GUI_TOUCH_StoreStateEx(&TS_State);
+		GUI_TS_State.Pressed = TS_State.touchDetected;
+		//GUI_TS_State.Layer = SelLayer;
+		if (TS_State.touchDetected) {
+			GUI_TS_State.x = TS_State.touchX[0];
+			GUI_TS_State.y = TS_State.touchY[0];
+			GUI_TOUCH_StoreStateEx(&GUI_TS_State);
 		} else {
-			GUI_TOUCH_StoreStateEx(&TS_State);
-			TS_State.x = 0;
-			TS_State.y = 0;
+			GUI_TOUCH_StoreStateEx(&GUI_TS_State);
+			GUI_TS_State.x = 0;
+			GUI_TS_State.y = 0;
 		}
 	}
 }

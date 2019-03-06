@@ -93,6 +93,7 @@ extern void GRAPHICS_IncTick(void);
 extern void TouchUpdate(void);
 static void GUIThread(void *pvParameters);
 static void ADCThread(void *pvParameters);
+//static void TSThread(void *pvParameters);
 static void TimerCallback(TimerHandle_t xTimer);
 /* USER CODE BEGIN PFP */
 /* USER CODE END PFP */
@@ -104,8 +105,6 @@ static void ADCThread(void *pvParameters) {
 		osDelay(50);
 	}
 }
-//osThreadDef(ADC_Thread, ADCThread, osPriorityNormal, 0, 2 * 1024);
-
 static void GUIThread(void *pvParameters) {
 	GRAPHICS_Init();
 	MainTask();
@@ -121,8 +120,12 @@ static void GUIThread(void *pvParameters) {
 		osDelay(5);
 	}
 }
-//osThreadDef(GUI_Thread, GUIThread, osPriorityNormal, 0, 2 * 1024);
-
+/*static void TSThread(void *pvParameters) {
+	while (1) {
+		TouchUpdate();
+		osDelay(100);
+	}
+}*/
 static void TimerCallback(TimerHandle_t xTimer) {
 	TouchUpdate();
 }
@@ -171,6 +174,7 @@ int main(void) {
 
 	xTaskCreate(GUIThread, ( char *) "GUI_Thread", configMINIMAL_STACK_SIZE, NULL, configMAX_PRIORITIES-1, NULL);
 	xTaskCreate(ADCThread, ( char *) "ACD_Thread", configMINIMAL_STACK_SIZE, NULL, configMAX_PRIORITIES-2, NULL);
+	//xTaskCreate(TSThread, ( char *) "TS_Thread", configMINIMAL_STACK_SIZE, NULL, configMAX_PRIORITIES-3, NULL);
 	TimerHandle_t TS_Timer=NULL;
 	TS_Timer = xTimerCreate(( char*) "TS_Timer", 100, pdTRUE, (void *) 0,TimerCallback);
 	xTimerStart(TS_Timer,0);
