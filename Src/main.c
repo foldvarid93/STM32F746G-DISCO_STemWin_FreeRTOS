@@ -91,15 +91,44 @@ extern void MainTask(void);
 void NewData(void);
 extern void GRAPHICS_IncTick(void);
 extern void TouchUpdate(void);
-static void GUIThread(void const * argument);
-static void ADCThread(void const * argument);
-static void TimerCallback(void const *n);
+static void GUIThread(void *pvParameters);
+static void ADCThread(void *pvParameters);
+static void TimerCallback(TimerHandle_t xTimer);
 /* USER CODE BEGIN PFP */
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+static void ADCThread(void *pvParameters) {
+	while (1) {
+		osDelay(50);
+	}
+}
+//osThreadDef(ADC_Thread, ADCThread, osPriorityNormal, 0, 2 * 1024);
 
+static void GUIThread(void *pvParameters) {
+	GRAPHICS_Init();
+	MainTask();
+
+	//osTimerDef(TS_Timer, TimerCallback); /* Create Touch screen Timer */
+	//lcd_timer = osTimerCreate(osTimer(TS_Timer), osTimerPeriodic, (void *) 0);
+
+	//osTimerStart(lcd_timer, 100); /* Start the TS Timer */
+
+	while (1) { /* Gui background Task */
+		NewData();
+		GUI_Exec();
+		osDelay(5);
+	}
+}
+//osThreadDef(GUI_Thread, GUIThread, osPriorityNormal, 0, 2 * 1024);
+
+static void TimerCallback(TimerHandle_t xTimer) {
+	TouchUpdate();
+}
+void vApplicationTickHook(void) {
+	HAL_IncTick();
+}
 /* USER CODE END 0 */
 
 /**
@@ -136,18 +165,22 @@ int main(void) {
 	MX_CRC_Init();
 	MX_ADC3_Init();
 	/* USER CODE BEGIN 2 */
-	osThreadDef(GUI_Thread, GUIThread, osPriorityNormal, 0, 2 * 1024);
-	osThreadCreate(osThread(GUI_Thread), NULL);
-	osThreadDef(ADC_Thread, ADCThread, osPriorityNormal, 0, 2 * 1024);
-	osThreadCreate(osThread(ADC_Thread), NULL);
-	osKernelStart();
+	//osThreadCreate(osThread(GUI_Thread), NULL);
+	//osThreadCreate(osThread(ADC_Thread), NULL);
+	//osKernelStart();
+
+	xTaskCreate(GUIThread, ( char *) "GUI_Thread", configMINIMAL_STACK_SIZE, NULL, configMAX_PRIORITIES-1, NULL);
+	xTaskCreate(ADCThread, ( char *) "ACD_Thread", configMINIMAL_STACK_SIZE, NULL, configMAX_PRIORITIES-2, NULL);
+	TimerHandle_t TS_Timer=NULL;
+	TS_Timer = xTimerCreate(( char*) "TS_Timer", 100, pdTRUE, (void *) 0,TimerCallback);
+	xTimerStart(TS_Timer,0);
+	vTaskStartScheduler();
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	for (;;)
 		;
 }
-
 /**
  * @brief System Clock Configuration
  * @retval None
@@ -212,32 +245,6 @@ void SystemClock_Config(void) {
 	}
 }
 /* USER CODE BEGIN 4 */
-void vApplicationTickHook(void) {
-	HAL_IncTick();
-}
-static void GUIThread(void const * argument) {
-	GRAPHICS_Init();
-	MainTask();
-
-	osTimerDef(TS_Timer, TimerCallback); /* Create Touch screen Timer */
-	lcd_timer = osTimerCreate(osTimer(TS_Timer), osTimerPeriodic, (void *) 0);
-
-	osTimerStart(lcd_timer, 100); /* Start the TS Timer */
-
-	while (1) { /* Gui background Task */
-		NewData();
-		GUI_Exec();
-		osDelay(5);
-	}
-}
-static void ADCThread(void const * argument) {
-	while (1) {
-		osDelay(50);
-	}
-}
-static void TimerCallback(void const *n) {
-	TouchUpdate();
-}
 /* USER CODE END 4 */
 /**
  * @brief  This function is executed in case of error occurrence.
