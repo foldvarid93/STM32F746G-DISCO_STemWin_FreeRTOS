@@ -167,6 +167,7 @@ int main(void) {
 	MX_GPIO_Init();
 	MX_CRC_Init();
 	MX_ADC3_Init();
+
 	/* USER CODE BEGIN 2 */
 	//osThreadCreate(osThread(GUI_Thread), NULL);
 	//osThreadCreate(osThread(ADC_Thread), NULL);
@@ -197,8 +198,7 @@ void SystemClock_Config(void) {
 
 	/**Configure the main internal regulator output voltage
 	 */
-	__HAL_RCC_PWR_CLK_ENABLE()
-	;
+	__HAL_RCC_PWR_CLK_ENABLE();
 	__HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
 	/**Initializes the CPU, AHB and APB busses clocks

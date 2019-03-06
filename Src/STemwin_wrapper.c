@@ -849,14 +849,14 @@ void GRAPHICS_Init(void) {
 	if (BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize()) != TS_OK) {
 		while (1);
 	}
-	BSP_TS_GetState(&TS_State);
+	//BSP_TS_GetState(&TS_State);
 #endif
 	GUI_Init();/* Initialize the GUI */
 	WM_MULTIBUF_Enable(1);/* Enable the multi-buffering functionality */
 	//WM_SetCreateFlags(WM_CF_MEMDEV);	/* USER CODE BEGIN WM_SetCreateFlags */
 }
 
-void TouchUpdate(void) {
+void TouchUpdate2(void) {
 	static GUI_PID_STATE GUI_TS_State = { 0, 0, 0, 0 };
 	//TS_StateTypeDef TS_State;
 	uint16_t xDiff, yDiff;
@@ -888,5 +888,44 @@ void TouchUpdate(void) {
 			GUI_TS_State.y = 0;
 		}
 	}
+}
+void TouchUpdate(void)
+{
+  static GUI_PID_STATE TS_State = {0, 0, 0, 0};
+  __IO TS_StateTypeDef  ts;
+  uint16_t xDiff, yDiff;
+
+  BSP_TS_GetState((TS_StateTypeDef *)&ts);
+
+  if((ts.touchX[0] >= LCD_GetXSize()) ||(ts.touchY[0] >= LCD_GetYSize()) )
+  {
+    ts.touchX[0] = 0;
+    ts.touchY[0] = 0;
+    ts.touchDetected =0;
+  }
+
+  xDiff = (TS_State.x > ts.touchX[0]) ? (TS_State.x - ts.touchX[0]) : (ts.touchX[0] - TS_State.x);
+  yDiff = (TS_State.y > ts.touchY[0]) ? (TS_State.y - ts.touchY[0]) : (ts.touchY[0] - TS_State.y);
+
+
+  if((TS_State.Pressed != ts.touchDetected ) ||
+     (xDiff > 30 )||
+      (yDiff > 30))
+  {
+    TS_State.Pressed = ts.touchDetected;
+    TS_State.Layer = 0;
+    if(ts.touchDetected)
+    {
+      TS_State.x = ts.touchX[0];
+      TS_State.y = ts.touchY[0];
+      GUI_TOUCH_StoreStateEx(&TS_State);
+    }
+    else
+    {
+      GUI_TOUCH_StoreStateEx(&TS_State);
+      TS_State.x = 0;
+      TS_State.y = 0;
+    }
+  }
 }
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
