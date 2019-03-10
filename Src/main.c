@@ -80,7 +80,8 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-osTimerId lcd_timer;
+osTimerId TsTimer;
+extern ADC_HandleTypeDef hadc3;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -93,7 +94,7 @@ extern void GRAPHICS_IncTick(void);
 extern void TouchUpdate(void);
 static void GUIThread(void const * argument); //static void GUIThread(void *pvParameters);
 static void ADCThread(void const * argument);//static void ADCThread(void *pvParameters);
-static void TimerCallback(void const *n);//static void TimerCallback(TimerHandle_t xTimer);
+static void TsTimerCallback(void const *n);//static void TimerCallback(TimerHandle_t xTimer);
 /* USER CODE BEGIN PFP */
 /* USER CODE END PFP */
 
@@ -101,17 +102,20 @@ static void TimerCallback(void const *n);//static void TimerCallback(TimerHandle
 /* USER CODE BEGIN 0 */
 //static void ADCThread(void *pvParameters) {
 static void ADCThread(void const * argument) {
+	HAL_ADC_Start(&hadc3);
+	HAL_ADC_GetValue(&hadc3);
+	uint32_t AdcValue;
 	while (1) {
+		AdcValue=HAL_ADC_GetValue(&hadc3);
+		HAL_ADC_Start(&hadc3);
 		osDelay(50);
 	}
 }
 //static void GUIThread(void *pvParameters) {
 static void GUIThread(void const * argument) {
-	osTimerDef(TS_Timer, TimerCallback);
-	lcd_timer = osTimerCreate(osTimer(TS_Timer), osTimerPeriodic, (void *) 0);
-
-	/* Start the TS Timer */
-	osTimerStart(lcd_timer, 100);
+	osTimerDef(TS_Timer, TsTimerCallback);
+	TsTimer = osTimerCreate(osTimer(TS_Timer), osTimerPeriodic, (void *) 0);
+	osTimerStart(TsTimer, 100);/* Start the TS Timer */
 	MainTask();
 	while (1) { /* Gui background Task */
 		NewData();
@@ -120,7 +124,7 @@ static void GUIThread(void const * argument) {
 	}
 }
 //static void TimerCallback(TimerHandle_t xTimer) {
-static void TimerCallback(void const *n){
+static void TsTimerCallback(void const *n){
 	TouchUpdate();
 }
 void vApplicationTickHook(void) {
