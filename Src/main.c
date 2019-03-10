@@ -91,22 +91,27 @@ extern void MainTask(void);
 void NewData(void);
 extern void GRAPHICS_IncTick(void);
 extern void TouchUpdate(void);
-static void GUIThread(void *pvParameters);
-static void ADCThread(void *pvParameters);
-//static void TSThread(void *pvParameters);
-static void TimerCallback(TimerHandle_t xTimer);
+static void GUIThread(void const * argument); //static void GUIThread(void *pvParameters);
+static void ADCThread(void const * argument);//static void ADCThread(void *pvParameters);
+static void TimerCallback(void const *n);//static void TimerCallback(TimerHandle_t xTimer);
 /* USER CODE BEGIN PFP */
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-static void ADCThread(void *pvParameters) {
+//static void ADCThread(void *pvParameters) {
+static void ADCThread(void const * argument) {
 	while (1) {
 		osDelay(50);
 	}
 }
-static void GUIThread(void *pvParameters) {
-	GRAPHICS_Init();
+//static void GUIThread(void *pvParameters) {
+static void GUIThread(void const * argument) {
+	osTimerDef(TS_Timer, TimerCallback);
+	lcd_timer = osTimerCreate(osTimer(TS_Timer), osTimerPeriodic, (void *) 0);
+
+	/* Start the TS Timer */
+	osTimerStart(lcd_timer, 100);
 	MainTask();
 	while (1) { /* Gui background Task */
 		NewData();
@@ -114,17 +119,12 @@ static void GUIThread(void *pvParameters) {
 		osDelay(5);
 	}
 }
-/*static void TSThread(void *pvParameters) {
-	while (1) {
-		TouchUpdate();
-		osDelay(100);
-	}
-}*/
-static void TimerCallback(TimerHandle_t xTimer) {
-	//TouchUpdate();
+//static void TimerCallback(TimerHandle_t xTimer) {
+static void TimerCallback(void const *n){
+	TouchUpdate();
 }
 void vApplicationTickHook(void) {
-	HAL_IncTick();
+	//HAL_IncTick();
 }
 /* USER CODE END 0 */
 
@@ -161,15 +161,20 @@ int main(void) {
 	MX_GPIO_Init();
 	MX_CRC_Init();
 	MX_ADC3_Init();
+	GRAPHICS_Init();
 	/* USER CODE BEGIN 2 */
-
-	xTaskCreate(GUIThread, ( char *) "GUI_Thread", configMINIMAL_STACK_SIZE, NULL, configMAX_PRIORITIES-1, NULL);
-	xTaskCreate(ADCThread, ( char *) "ACD_Thread", configMINIMAL_STACK_SIZE, NULL, configMAX_PRIORITIES-2, NULL);
+	osThreadDef(GUI_Thread, GUIThread, osPriorityNormal, 0, 2 * 1024);
+	osThreadCreate(osThread(GUI_Thread), NULL);
+	osThreadDef(ADC_Thread, ADCThread, osPriorityNormal, 0, 2 * 1024);
+	osThreadCreate(osThread(ADC_Thread), NULL);
+	osKernelStart();
+	//xTaskCreate(GUIThread, ( char *) "GUI_Thread", configMINIMAL_STACK_SIZE, NULL, configMAX_PRIORITIES-1, NULL);
+	//xTaskCreate(ADCThread, ( char *) "ACD_Thread", configMINIMAL_STACK_SIZE, NULL, configMAX_PRIORITIES-2, NULL);
 	//xTaskCreate(TSThread, ( char *) "TS_Thread", configMINIMAL_STACK_SIZE, NULL, configMAX_PRIORITIES-3, NULL);
-	TimerHandle_t TS_Timer=NULL;
-	TS_Timer = xTimerCreate(( char*) "TS_Timer", 100, pdTRUE, (void *) 0,TimerCallback);
-	xTimerStart(TS_Timer,0);
-	vTaskStartScheduler();
+	//TimerHandle_t TS_Timer=NULL;
+	//TS_Timer = xTimerCreate(( char*) "TS_Timer", 100, pdTRUE, (void *) 0,TimerCallback);
+	//xTimerStart(TS_Timer,0);
+	//vTaskStartScheduler();
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
@@ -188,7 +193,8 @@ void SystemClock_Config(void) {
 
 	/**Configure the main internal regulator output voltage
 	 */
-	__HAL_RCC_PWR_CLK_ENABLE();
+	__HAL_RCC_PWR_CLK_ENABLE()
+	;
 	__HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
 	/**Initializes the CPU, AHB and APB busses clocks
@@ -239,6 +245,25 @@ void SystemClock_Config(void) {
 	}
 }
 /* USER CODE BEGIN 4 */
+/**
+ * @brief  Period elapsed callback in non blocking mode
+ * @note   This function is called  when TIM6 interrupt took place, inside
+ * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+ * a global variable "uwTick" used as application time base.
+ * @param  htim : TIM handle
+ * @retval None
+ */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
+	/* USER CODE BEGIN Callback 0 */
+
+	/* USER CODE END Callback 0 */
+	if (htim->Instance == TIM6) {
+		HAL_IncTick();
+	}
+	/* USER CODE BEGIN Callback 1 */
+
+	/* USER CODE END Callback 1 */
+}
 /* USER CODE END 4 */
 /**
  * @brief  This function is executed in case of error occurrence.

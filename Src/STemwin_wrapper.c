@@ -845,7 +845,7 @@ void GRAPHICS_Init(void) {
 	MX_FMC_Init();
 	BSP_SDRAM_Init();
 #if   GUI_SUPPORT_TOUCH//if touch supported
-	TS_IO_Init();
+	//TS_IO_Init();
 	if (BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize()) != TS_OK) {
 		while (1);
 	}
