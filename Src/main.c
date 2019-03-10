@@ -163,9 +163,9 @@ int main(void) {
 	MX_ADC3_Init();
 	GRAPHICS_Init();
 	/* USER CODE BEGIN 2 */
-	osThreadDef(GUI_Thread, GUIThread, osPriorityNormal, 0, 2 * 1024);
+	osThreadDef(GUI_Thread, GUIThread, osPriorityNormal, 0, 2048);
 	osThreadCreate(osThread(GUI_Thread), NULL);
-	osThreadDef(ADC_Thread, ADCThread, osPriorityNormal, 0, 2 * 1024);
+	osThreadDef(ADC_Thread, ADCThread, osPriorityNormal, 0, 1024);
 	osThreadCreate(osThread(ADC_Thread), NULL);
 	osKernelStart();
 	//xTaskCreate(GUIThread, ( char *) "GUI_Thread", configMINIMAL_STACK_SIZE, NULL, configMAX_PRIORITIES-1, NULL);
