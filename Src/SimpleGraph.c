@@ -118,7 +118,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 		//
 		// Create two data items, one for sin, one for cos
 		//
-		PhaseDataA = GRAPH_DATA_YT_Create(GUI_YELLOW, NumItems, NULL, 0);
+		PhaseDataA = GRAPH_DATA_YT_Create(GUI_RED, NumItems, NULL, 0);
 		//PhaseDataB = GRAPH_DATA_YT_Create(GUI_WHITE, NumItems, NULL, 0);
 		//PhaseDataC = GRAPH_DATA_YT_Create(GUI_LIGHTCYAN, NumItems, NULL, 0);
 		//
@@ -207,7 +207,7 @@ void NewData(void) {
 	if (Stop) {
 	}
 	else {
-		double a=0.1;
+		double a=0.3;
 		NewPhaseDataA = (AdcValue*a);//GUI_sin(AngleA) * AdcValue/40960;
 		//NewPhaseDataB = GUI_sin(AngleB) * Factor;
 		//NewPhaseDataC = GUI_sin(AngleC) * Factor;

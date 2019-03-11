@@ -125,7 +125,7 @@ static void GUIThread(void const * argument) {
 	while (1) { /* Gui background Task */
 		NewData();
 		GUI_Exec();
-		osDelay(50);
+		osDelay(5);
 	}
 }
 //static void TimerCallback(TimerHandle_t xTimer) {
