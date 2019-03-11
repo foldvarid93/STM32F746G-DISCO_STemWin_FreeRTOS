@@ -82,6 +82,9 @@
 /* USER CODE BEGIN PV */
 osTimerId TsTimer;
 extern ADC_HandleTypeDef hadc3;
+int AdcValue;
+double Factor;
+float factor;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -103,10 +106,12 @@ static void TsTimerCallback(void const *n);//static void TimerCallback(TimerHand
 //static void ADCThread(void *pvParameters) {
 static void ADCThread(void const * argument) {
 	HAL_ADC_Start(&hadc3);
-	HAL_ADC_GetValue(&hadc3);
-	uint32_t AdcValue;
 	while (1) {
-		AdcValue=HAL_ADC_GetValue(&hadc3);
+		if(HAL_ADC_PollForConversion(&hadc3,0)==HAL_OK){
+			AdcValue=HAL_ADC_GetValue(&hadc3);
+			//Factor=AdcValue/40960;
+			//factor=AdcValue/40960;
+		}
 		HAL_ADC_Start(&hadc3);
 		osDelay(50);
 	}
@@ -120,7 +125,7 @@ static void GUIThread(void const * argument) {
 	while (1) { /* Gui background Task */
 		NewData();
 		GUI_Exec();
-		osDelay(5);
+		osDelay(50);
 	}
 }
 //static void TimerCallback(TimerHandle_t xTimer) {

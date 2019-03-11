@@ -28,6 +28,8 @@ int AngleA = 0;
 int AngleB = 0x555;
 int AngleC = 0xAAA;
 static int Stop;
+extern int AdcValue;
+extern double Factor;
 /*********************************************************************
  *
  *       Static data
@@ -39,8 +41,9 @@ static int Stop;
  *       _aDialogCreate
  */
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
-		{ WINDOW_CreateIndirect, "Window", ID_WINDOW_0, 0, 0, 480, 272, 0, 0x0,0 },
-		{ GRAPH_CreateIndirect, "Graph", ID_GRAPH_0, 5, 5, 470,	262, 0, 0x0, 0 },
+		{ WINDOW_CreateIndirect, "Window", ID_WINDOW_0, 0, 0, 480, 272, 0, 0x0,
+				0 }, { GRAPH_CreateIndirect, "Graph", ID_GRAPH_0, 5, 5, 470,
+				262, 0, 0x0, 0 },
 // USER START (Optionally insert additional widgets)
 // USER END
 		};
@@ -116,14 +119,14 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 		// Create two data items, one for sin, one for cos
 		//
 		PhaseDataA = GRAPH_DATA_YT_Create(GUI_YELLOW, NumItems, NULL, 0);
-		PhaseDataB = GRAPH_DATA_YT_Create(GUI_WHITE, NumItems, NULL, 0);
-		PhaseDataC = GRAPH_DATA_YT_Create(GUI_LIGHTCYAN, NumItems, NULL, 0);
+		//PhaseDataB = GRAPH_DATA_YT_Create(GUI_WHITE, NumItems, NULL, 0);
+		//PhaseDataC = GRAPH_DATA_YT_Create(GUI_LIGHTCYAN, NumItems, NULL, 0);
 		//
 		// Attach them to the GRAPH
 		//
 		GRAPH_AttachData(hItem, PhaseDataA);
-		GRAPH_AttachData(hItem, PhaseDataB);
-		GRAPH_AttachData(hItem, PhaseDataC);
+		//GRAPH_AttachData(hItem, PhaseDataB);
+		//GRAPH_AttachData(hItem, PhaseDataC);
 		//
 		// Create a timer which updates the GRAPH
 		//
@@ -197,25 +200,27 @@ static void _cbBk(WM_MESSAGE * pMsg) {
  */
 void MainTask(void) {
 	WM_SetCallback(WM_HBKWIN, _cbBk);
-	GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog, WM_HBKWIN, 0, 0);
+	GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog,
+			WM_HBKWIN, 0, 0);
 }
-void NewData(void)
-{
-		if(Stop){}
-		else{
-		NewPhaseDataA = GUI_sin(AngleA) / 10;
-		NewPhaseDataB = GUI_sin(AngleB) / 10;
-		NewPhaseDataC = GUI_sin(AngleC) / 10;
+void NewData(void) {
+	if (Stop) {
+	}
+	else {
+		double a=0.1;
+		NewPhaseDataA = (AdcValue*a);//GUI_sin(AngleA) * AdcValue/40960;
+		//NewPhaseDataB = GUI_sin(AngleB) * Factor;
+		//NewPhaseDataC = GUI_sin(AngleC) * Factor;
 		AngleA += 10;
-		AngleB += 10;
-		AngleC += 10;
+		//AngleB += 10;
+		//AngleC += 10;
 		if (AngleA == 0xfff) {
 			AngleA = 0;
-			AngleB = 0x555;
-			AngleC = 0xAAA;
+			//AngleB = 0x555;
+			//AngleC = 0xAAA;
 		}
-		GRAPH_DATA_YT_AddValue(PhaseDataA, NewPhaseDataA + 131);
-		GRAPH_DATA_YT_AddValue(PhaseDataB, NewPhaseDataB + 131);
-		GRAPH_DATA_YT_AddValue(PhaseDataC, NewPhaseDataC + 131);
-		}
+		GRAPH_DATA_YT_AddValue(PhaseDataA, NewPhaseDataA);
+		//GRAPH_DATA_YT_AddValue(PhaseDataB, NewPhaseDataB + 131);
+		//GRAPH_DATA_YT_AddValue(PhaseDataC, NewPhaseDataC + 131);
+	}
 }
