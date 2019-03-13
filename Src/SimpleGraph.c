@@ -208,7 +208,7 @@ void NewData(void) {
 	}
 	else {
 		double a=0.3;
-		NewPhaseDataA = (AdcValue*a);//GUI_sin(AngleA) * AdcValue/40960;
+		NewPhaseDataA = (AdcValue*a);//GUI_sin(AngleA) /10;//
 		//NewPhaseDataB = GUI_sin(AngleB) * Factor;
 		//NewPhaseDataC = GUI_sin(AngleC) * Factor;
 		AngleA += 10;
