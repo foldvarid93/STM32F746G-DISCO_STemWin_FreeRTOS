@@ -208,17 +208,17 @@ void NewData(void) {
 	}
 	else {
 		double a=0.3;
-		NewPhaseDataA = (AdcValue*a);//GUI_sin(AngleA) /10;//
+		NewPhaseDataA = (AdcValue*0.0634765625);//GUI_sin(AngleA) /10;//
 		//NewPhaseDataB = GUI_sin(AngleB) * Factor;
 		//NewPhaseDataC = GUI_sin(AngleC) * Factor;
-		AngleA += 10;
+		//AngleA += 10;
 		//AngleB += 10;
 		//AngleC += 10;
-		if (AngleA == 0xfff) {
-			AngleA = 0;
+		//if (AngleA == 0xfff) {
+			//AngleA = 0;
 			//AngleB = 0x555;
 			//AngleC = 0xAAA;
-		}
+		//}
 		GRAPH_DATA_YT_AddValue(PhaseDataA, NewPhaseDataA);
 		//GRAPH_DATA_YT_AddValue(PhaseDataB, NewPhaseDataB + 131);
 		//GRAPH_DATA_YT_AddValue(PhaseDataC, NewPhaseDataC + 131);

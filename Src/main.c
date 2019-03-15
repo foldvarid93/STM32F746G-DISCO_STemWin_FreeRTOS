@@ -172,7 +172,7 @@ int main(void) {
 	MX_ADC3_Init();
 	GRAPHICS_Init();
 	/* USER CODE BEGIN 2 */
-	osThreadDef(GUI_Thread, GUIThread, osPriorityNormal, 0, 2048);
+	osThreadDef(GUI_Thread, GUIThread, osPriorityNormal, 0, 8192);
 	osThreadCreate(osThread(GUI_Thread), NULL);
 	osThreadDef(ADC_Thread, ADCThread, osPriorityNormal, 0, 1024);
 	osThreadCreate(osThread(ADC_Thread), NULL);
