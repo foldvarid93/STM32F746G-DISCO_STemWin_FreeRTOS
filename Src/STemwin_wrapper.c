@@ -852,7 +852,7 @@ void GRAPHICS_Init(void) {
 #endif
 	GUI_Init();/* Initialize the GUI */
 	WM_MULTIBUF_Enable(1);/* Enable the multi-buffering functionality */
-	//WM_SetCreateFlags(WM_CF_MEMDEV);	/* USER CODE BEGIN WM_SetCreateFlags */
+	WM_SetCreateFlags(WM_CF_MEMDEV);	/* USER CODE BEGIN WM_SetCreateFlags */
 }
 
 void TouchUpdate(void) {

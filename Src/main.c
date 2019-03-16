@@ -144,10 +144,10 @@ int main(void) {
 	/* USER CODE END 1 */
 
 	/* Enable I-Cache---------------------------------------------------------*/
-	SCB_EnableICache();
+	//SCB_EnableICache();
 
 	/* Enable D-Cache---------------------------------------------------------*/
-	SCB_EnableDCache();
+	//SCB_EnableDCache();
 
 	/* MCU Configuration--------------------------------------------------------*/
 
@@ -175,13 +175,6 @@ int main(void) {
 	osThreadDef(ADC_Thread, ADCThread, osPriorityNormal, 0, 1024);
 	osThreadCreate(osThread(ADC_Thread), NULL);
 	osKernelStart();
-	//xTaskCreate(GUIThread, ( char *) "GUI_Thread", configMINIMAL_STACK_SIZE, NULL, configMAX_PRIORITIES-1, NULL);
-	//xTaskCreate(ADCThread, ( char *) "ACD_Thread", configMINIMAL_STACK_SIZE, NULL, configMAX_PRIORITIES-2, NULL);
-	//xTaskCreate(TSThread, ( char *) "TS_Thread", configMINIMAL_STACK_SIZE, NULL, configMAX_PRIORITIES-3, NULL);
-	//TimerHandle_t TS_Timer=NULL;
-	//TS_Timer = xTimerCreate(( char*) "TS_Timer", 100, pdTRUE, (void *) 0,TimerCallback);
-	//xTimerStart(TS_Timer,0);
-	//vTaskStartScheduler();
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
