@@ -18,18 +18,16 @@
 
 #define MESSAGE_STARTSTOP  (WM_USER + 0x00)
 
-GRAPH_DATA_Handle PhaseDataA;
-GRAPH_DATA_Handle PhaseDataB;
-GRAPH_DATA_Handle PhaseDataC;
-int NewPhaseDataA;
-int NewPhaseDataB;
-int NewPhaseDataC;
+static GUI_POINT Points[470];
+static GRAPH_DATA_Handle SineData;
+
 int AngleA = 0;
-int AngleB = 0x555;
-int AngleC = 0xAAA;
+
 static int Stop;
+
 extern int AdcValue;
-extern double Factor;
+
+double a;
 /*********************************************************************
  *
  *       Static data
@@ -118,13 +116,13 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 		//
 		// Create two data items, one for sin, one for cos
 		//
-		PhaseDataA = GRAPH_DATA_YT_Create(GUI_RED, NumItems, NULL, 0);
+		SineData = GRAPH_DATA_XY_Create(GUI_RED, 470, Points, GUI_COUNTOF(Points));
 		//PhaseDataB = GRAPH_DATA_YT_Create(GUI_WHITE, NumItems, NULL, 0);
 		//PhaseDataC = GRAPH_DATA_YT_Create(GUI_LIGHTCYAN, NumItems, NULL, 0);
 		//
 		// Attach them to the GRAPH
 		//
-		GRAPH_AttachData(hItem, PhaseDataA);
+		GRAPH_AttachData(hItem, SineData);
 		//GRAPH_AttachData(hItem, PhaseDataB);
 		//GRAPH_AttachData(hItem, PhaseDataC);
 		//
@@ -200,27 +198,25 @@ static void _cbBk(WM_MESSAGE * pMsg) {
  */
 void MainTask(void) {
 	WM_SetCallback(WM_HBKWIN, _cbBk);
-	GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog,
-			WM_HBKWIN, 0, 0);
+	GUI_CreateDialogBox(_aDialogCreate, GUI_COUNTOF(_aDialogCreate), _cbDialog,	WM_HBKWIN, 0, 0);
 }
 void NewData(void) {
 	if (Stop) {
-	}
-	else {
-		double a=0.3;
-		NewPhaseDataA = (AdcValue*0.0634765625);//GUI_sin(AngleA) /10;//
-		//NewPhaseDataB = GUI_sin(AngleB) * Factor;
-		//NewPhaseDataC = GUI_sin(AngleC) * Factor;
-		//AngleA += 10;
-		//AngleB += 10;
-		//AngleC += 10;
-		//if (AngleA == 0xfff) {
-			//AngleA = 0;
-			//AngleB = 0x555;
-			//AngleC = 0xAAA;
-		//}
-		GRAPH_DATA_YT_AddValue(PhaseDataA, NewPhaseDataA);
-		//GRAPH_DATA_YT_AddValue(PhaseDataB, NewPhaseDataB + 131);
-		//GRAPH_DATA_YT_AddValue(PhaseDataC, NewPhaseDataC + 131);
+	} else {
+		WM_HWIN hItem;
+		a = AdcValue * 0.0000244140625;
+		for(int i=0;i<470;i++){
+			Points[i].x=i;
+			Points[i].y=(GUI_sin(8.712765957446809*i)*a)+131;
+		}
+		hItem = WM_GetFirstChild(WM_HBKWIN);
+		hItem = WM_GetDialogItem(hItem, ID_GRAPH_0);
+		GRAPH_DetachData(hItem, SineData);
+		GRAPH_DATA_XY_Delete(SineData);
+		//
+		// Create a new one and attach it
+		//
+		SineData = GRAPH_DATA_XY_Create(GUI_GREEN, 470, Points,	GUI_COUNTOF(Points));
+		GRAPH_AttachData(hItem, SineData);
 	}
 }
