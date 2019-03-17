@@ -74,6 +74,7 @@
 extern DMA2D_HandleTypeDef hdma2d;
 extern LTDC_HandleTypeDef hltdc;
 extern TIM_HandleTypeDef htim6;
+extern SAI_HandleTypeDef haudio_in_sai;
 
 /* USER CODE BEGIN EV */
 
@@ -173,6 +174,10 @@ void TIM6_DAC_IRQHandler(void)
   /* USER CODE BEGIN TIM6_DAC_IRQn 1 */
 
   /* USER CODE END TIM6_DAC_IRQn 1 */
+}
+void AUDIO_IN_SAIx_DMAx_IRQHandler(void)
+{
+  HAL_DMA_IRQHandler(haudio_in_sai.hdmarx);
 }
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

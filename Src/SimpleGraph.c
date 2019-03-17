@@ -23,7 +23,9 @@ static GRAPH_DATA_Handle SineData;
 WM_HWIN hItem;
 static int Stop;
 extern int AdcValue;
+extern char dmaBuffer[470];
 double Factor;
+int tmpdata;
 /*********************************************************************
  *
  *       Static data
@@ -87,7 +89,7 @@ static void _cbGraph(WM_MESSAGE * pMsg) {
  */
 static void _cbDialog(WM_MESSAGE * pMsg) {
 	WM_HWIN hItem;
-	int NumItems;
+	//int NumItems;
 
 //  static WM_HTIMER hTimer;
 
@@ -108,7 +110,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
 		//
 		// Get x size, used as max num items
 		//
-		NumItems = WM_GetWindowSizeX(hItem);
+		//NumItems = WM_GetWindowSizeX(hItem);
 		//
 		// Create two data items, one for sin, one for cos
 		//
@@ -212,4 +214,21 @@ void NewData(void) {
 		SineData = GRAPH_DATA_XY_Create(GUI_GREEN, 470, Points,	GUI_COUNTOF(Points));
 		GRAPH_AttachData(hItem, SineData);
 	}
+}
+void SAIData(void) {
+		/*Factor = AdcValue * 0.0000244140625;*/
+
+		for(int i=0;i<470;i++){
+			Points[i].x=i;
+			Points[i].y=dmaBuffer[i];//(GUI_sin(8.712765957446809*i)*Factor)+131;
+		}
+		hItem = WM_GetFirstChild(WM_HBKWIN);
+		hItem = WM_GetDialogItem(hItem, ID_GRAPH_0);
+		GRAPH_DetachData(hItem, SineData);
+		GRAPH_DATA_XY_Delete(SineData);
+		SineData = GRAPH_DATA_XY_Create(GUI_GREEN, 470, Points,	GUI_COUNTOF(Points));
+		//GRAPH_DATA_XY_SetPenSize(SineData, 2);
+		GRAPH_DATA_XY_SetLineVis(SineData, 0);
+		GRAPH_DATA_XY_SetPointVis(SineData, 1);
+		GRAPH_AttachData(hItem, SineData);
 }

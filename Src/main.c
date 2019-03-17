@@ -57,6 +57,7 @@
 #include "stm32746g_discovery_lcd.h"
 #include "stm32746g_discovery_sdram.h"
 #include "stm32746g_discovery_ts.h"
+#include "stm32746g_discovery_audio.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "cmsis_os.h"
@@ -82,9 +83,12 @@
 /* USER CODE BEGIN PV */
 osTimerId TsTimer;
 extern ADC_HandleTypeDef hadc3;
+extern SAI_HandleTypeDef haudio_in_sai;
 int AdcValue;
 double Factor;
 float factor;
+uint8_t dmaBuffer[940];
+#define DMA_BUFFER_LENGTH 470
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -93,18 +97,52 @@ extern void GRAPHICS_HW_Init(void);
 extern void GRAPHICS_Init(void);
 extern void MainTask(void);
 void NewData(void);
+void SAIData(void);
 extern void GRAPHICS_IncTick(void);
 extern void TouchUpdate(void);
-static void GUIThread(void const * argument); //static void GUIThread(void *pvParameters);
-static void ADCThread(void const * argument);//static void ADCThread(void *pvParameters);
 static void TsTimerCallback(void const *n);//static void TimerCallback(TimerHandle_t xTimer);
+//fft tasks
+static void GUI_Task ( void const * argument);
+static void Signal_Task ( void const * argument);
+static void FFT_Task ( void const * argument);
+static void ADC_Task(void const * argument);
 /* USER CODE BEGIN PFP */
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-//static void ADCThread(void *pvParameters) {
-static void ADCThread(void const * argument) {
+static void TsTimerCallback(void const *n){
+	TouchUpdate();
+}
+void vApplicationTickHook(void) {
+	//HAL_IncTick();
+}
+void GUI_Task ( void const * argument){
+	GRAPHICS_Init();
+	MainTask();
+	osTimerDef(TS_Timer, TsTimerCallback);
+	TsTimer = osTimerCreate(osTimer(TS_Timer), osTimerPeriodic, (void *) 0);
+	osTimerStart(TsTimer, 100);/* Start the TS Timer */
+
+	while (1) { /* Gui background Task */
+		//NewData();
+		HAL_SAI_Receive(&haudio_in_sai, dmaBuffer, DMA_BUFFER_LENGTH, 10000);
+		SAIData();
+		GUI_Exec();
+		osDelay(200);
+	}
+}
+void Signal_Task ( void const * argument){
+	while(1){
+		osDelay(25);
+	}
+}
+void FFT_Task ( void const * argument){
+	while(1){
+		osDelay(25);
+	}
+}
+static void ADC_Task(void const * argument) {
 	HAL_ADC_Start(&hadc3);
 	while (1) {
 		if(HAL_ADC_PollForConversion(&hadc3,0)==HAL_OK){
@@ -114,25 +152,7 @@ static void ADCThread(void const * argument) {
 		osDelay(50);
 	}
 }
-//static void GUIThread(void *pvParameters) {
-static void GUIThread(void const * argument) {
-	osTimerDef(TS_Timer, TsTimerCallback);
-	TsTimer = osTimerCreate(osTimer(TS_Timer), osTimerPeriodic, (void *) 0);
-	osTimerStart(TsTimer, 100);/* Start the TS Timer */
-	MainTask();
-	while (1) { /* Gui background Task */
-		NewData();
-		GUI_Exec();
-		osDelay(25);
-	}
-}
-//static void TimerCallback(TimerHandle_t xTimer) {
-static void TsTimerCallback(void const *n){
-	TouchUpdate();
-}
-void vApplicationTickHook(void) {
-	//HAL_IncTick();
-}
+//
 /* USER CODE END 0 */
 
 /**
@@ -168,35 +188,33 @@ int main(void) {
 	MX_GPIO_Init();
 	MX_CRC_Init();
 	MX_ADC3_Init();
-	GRAPHICS_Init();
+	BSP_AUDIO_IN_Init(INPUT_DEVICE_INPUT_LINE_1, DEFAULT_AUDIO_IN_VOLUME, DEFAULT_AUDIO_IN_FREQ);
+	HAL_SAI_Receive(&haudio_in_sai, dmaBuffer, DMA_BUFFER_LENGTH, 10000);
+	//BSP_AUDIO_IN_Record(dmaBuffer, DMA_BUFFER_LENGTH);
 	/* USER CODE BEGIN 2 */
-	osThreadDef(GUI_Thread, GUIThread, osPriorityNormal, 0, 8192);
-	osThreadCreate(osThread(GUI_Thread), NULL);
-	osThreadDef(ADC_Thread, ADCThread, osPriorityNormal, 0, 1024);
-	osThreadCreate(osThread(ADC_Thread), NULL);
-	osKernelStart();
+	xTaskCreate ((TaskFunction_t) GUI_Task, "GUI_Task", 1024, NULL, 1, NULL);
+	xTaskCreate ((TaskFunction_t) Signal_Task, "Signal_Task", 1024, NULL, 1, NULL);
+	xTaskCreate ((TaskFunction_t) FFT_Task, "FFT_Task", 1024, NULL, 1, NULL);
+	xTaskCreate ((TaskFunction_t) ADC_Task, "ADC_Task", 1024, NULL, 1, NULL);
+	vTaskStartScheduler ();
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
-	for (;;)
-		;
+	while(1){
+		asm("nop");
+	}
 }
 /**
  * @brief System Clock Configuration
  * @retval None
  */
 void SystemClock_Config(void) {
-
 	RCC_OscInitTypeDef RCC_OscInitStruct;
 	RCC_ClkInitTypeDef RCC_ClkInitStruct;
 	RCC_PeriphCLKInitTypeDef PeriphClkInitStruct;
-
-	/**Configure the main internal regulator output voltage
-	 */
-	__HAL_RCC_PWR_CLK_ENABLE()
-	;
+	/**Configure the main internal regulator output voltage*/
+	__HAL_RCC_PWR_CLK_ENABLE();
 	__HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
-
 	/**Initializes the CPU, AHB and APB busses clocks
 	 */
 	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
@@ -210,17 +228,12 @@ void SystemClock_Config(void) {
 	if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
 		Error_Handler();
 	}
-
-	/**Activate the Over-Drive mode
-	 */
+	/**Activate the Over-Drive mode*/
 	if (HAL_PWREx_EnableOverDrive() != HAL_OK) {
 		Error_Handler();
 	}
-
-	/**Initializes the CPU, AHB and APB busses clocks
-	 */
-	RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
-			| RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
+	/**Initializes the CPU, AHB and APB busses clocks*/
+	RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK| RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
 	RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
 	RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
 	RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
@@ -229,9 +242,7 @@ void SystemClock_Config(void) {
 	if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_6) != HAL_OK) {
 		Error_Handler();
 	}
-
-	PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_LTDC
-			| RCC_PERIPHCLK_USART6 | RCC_PERIPHCLK_I2C3;
+	PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_LTDC| RCC_PERIPHCLK_USART6 | RCC_PERIPHCLK_I2C3;
 	PeriphClkInitStruct.PLLSAI.PLLSAIN = 192;
 	PeriphClkInitStruct.PLLSAI.PLLSAIR = 5;
 	PeriphClkInitStruct.PLLSAI.PLLSAIQ = 2;
@@ -263,6 +274,19 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 	/* USER CODE BEGIN Callback 1 */
 
 	/* USER CODE END Callback 1 */
+}
+void BSP_AUDIO_IN_HalfTransfer_CallBack(void) {
+	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+	//xTaskNotifyFromISR(appGlobals.fftTaskId, TASK_EVENT_DMA_HALF_DONE, eSetBits,&xHigherPriorityTaskWoken);
+	//xTaskNotifyFromISR(appGlobals.signalTaskId, TASK_EVENT_DMA_HALF_DONE, eSetBits,&xHigherPriorityTaskWoken);
+	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+}
+
+void BSP_AUDIO_IN_TransferComplete_CallBack(void) {
+	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+	//xTaskNotifyFromISR(appGlobals.fftTaskId, TASK_EVENT_DMA_DONE, eSetBits,&xHigherPriorityTaskWoken);
+	//xTaskNotifyFromISR(appGlobals.signalTaskId, TASK_EVENT_DMA_DONE, eSetBits,&xHigherPriorityTaskWoken);
+	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 }
 /* USER CODE END 4 */
 /**

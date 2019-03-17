@@ -1,11 +1,16 @@
-/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    stm32f7xx_it.h
-  * @brief   This file contains the headers of the interrupt handlers.
-  ******************************************************************************
+  * @file    stm32f7xx_hal_sai_ex.c
+  * @author  MCD Application Team
+  * @brief   Empty file; This file is no longer used to set synchronization and
+  *          to get SAI block frequency. Its content is now moved to common files
+  *          (stm32f7xx_hal_sai.c/.h) as there's no device's dependency within F7
+  *          family. It's just kept for compatibility reasons.
   *
-  * COPYRIGHT(c) 2019 STMicroelectronics
+  ******************************************************************************
+  * @attention
+  *
+  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics</center></h2>
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -30,55 +35,16 @@
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   *
   ******************************************************************************
-  */
-/* USER CODE END Header */
+  */ 
 
-/* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32F7xx_IT_H
-#define __STM32F7xx_IT_H
+/* Includes ------------------------------------------------------------------*/
+#include "stm32f7xx_hal.h"
+/* Private typedef -----------------------------------------------------------*/
+/* Private define ------------------------------------------------------------*/
+/* Private macro -------------------------------------------------------------*/
+/* Private variables ---------------------------------------------------------*/
+/* Private function prototypes -----------------------------------------------*/
+/* Private functions ---------------------------------------------------------*/
 
-#ifdef __cplusplus
- extern "C" {
-#endif 
-
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
-
-/* USER CODE END Includes */
-
-/* Exported types ------------------------------------------------------------*/
-/* USER CODE BEGIN ET */
-
-/* USER CODE END ET */
-
-/* Exported constants --------------------------------------------------------*/
-/* USER CODE BEGIN EC */
-
-/* USER CODE END EC */
-
-/* Exported macro ------------------------------------------------------------*/
-/* USER CODE BEGIN EM */
-
-/* USER CODE END EM */
-
-/* Exported functions prototypes ---------------------------------------------*/
-void SVC_Handler(void);
-void DebugMon_Handler(void);
-void PendSV_Handler(void);
-void SysTick_Handler(void);
-void TIM6_DAC_IRQHandler(void);
-void LTDC_IRQHandler(void);
-void LTDC_ER_IRQHandler(void);
-void DMA2D_IRQHandler(void);
-void AUDIO_IN_SAIx_DMAx_IRQHandler(void);
-/* USER CODE BEGIN EFP */
-
-/* USER CODE END EFP */
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* __STM32F7xx_IT_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
