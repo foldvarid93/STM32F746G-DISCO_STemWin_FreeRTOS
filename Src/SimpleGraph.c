@@ -217,10 +217,13 @@ void NewData(void) {
 }
 void SAIData(void) {
 		/*Factor = AdcValue * 0.0000244140625;*/
-
-		for(int i=0;i<470;i++){
-			Points[i].x=i;
-			Points[i].y=dmaBuffer[i];//(GUI_sin(8.712765957446809*i)*Factor)+131;
+		//GRAPH_DATA_XY_Clear(SineData);
+		for(int i=0;i<235;i++){
+			Points[2*i].x=2*i;
+			Points[2*i].y=dmaBuffer[2*i];//(GUI_sin(8.712765957446809*i)*Factor)+131;
+			Points[2*i+1].x=2*i+1;
+			Points[2*i+1].y=dmaBuffer[2*i];
+			//GRAPH_DATA_XY_AddPoint(SineData,&Points[i]);
 		}
 		hItem = WM_GetFirstChild(WM_HBKWIN);
 		hItem = WM_GetDialogItem(hItem, ID_GRAPH_0);
@@ -228,7 +231,7 @@ void SAIData(void) {
 		GRAPH_DATA_XY_Delete(SineData);
 		SineData = GRAPH_DATA_XY_Create(GUI_GREEN, 470, Points,	GUI_COUNTOF(Points));
 		//GRAPH_DATA_XY_SetPenSize(SineData, 2);
-		GRAPH_DATA_XY_SetLineVis(SineData, 0);
-		GRAPH_DATA_XY_SetPointVis(SineData, 1);
+		//GRAPH_DATA_XY_SetLineVis(SineData, 0);
+		//GRAPH_DATA_XY_SetPointVis(SineData, 1);
 		GRAPH_AttachData(hItem, SineData);
 }

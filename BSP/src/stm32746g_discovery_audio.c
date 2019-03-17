@@ -795,7 +795,7 @@ static void SAIx_Out_DeInit(void)
   */
 uint8_t BSP_AUDIO_IN_Init(uint32_t AudioFreq, uint32_t BitRes, uint32_t ChnlNbr)
 {
-  return BSP_AUDIO_IN_InitEx(INPUT_DEVICE_DIGITAL_MICROPHONE_2, AudioFreq, BitRes, ChnlNbr); 
+  return BSP_AUDIO_IN_InitEx(INPUT_DEVICE_DIGITAL_MICROPHONE_2, AudioFreq, BitRes, ChnlNbr);
 }
 
 /**
@@ -868,7 +868,7 @@ uint8_t BSP_AUDIO_IN_InitEx(uint16_t InputDevice, uint32_t AudioFreq, uint32_t B
     if(ret == AUDIO_OK)
     {
       /* Initialize the codec internal registers */
-      audio_drv->Init(AUDIO_I2C_ADDRESS, InputDevice, 100, AudioFreq);
+      audio_drv->Init(AUDIO_I2C_ADDRESS, InputDevice, BitRes, AudioFreq);
     }
   }
   return ret;
@@ -1260,7 +1260,7 @@ static void SAIx_In_Init(uint32_t SaiOutMode, uint32_t SlotActive, uint32_t Audi
   haudio_out_sai.Init.AudioMode = SaiOutMode;
   haudio_out_sai.Init.NoDivider = SAI_MASTERDIVIDER_ENABLED;
   haudio_out_sai.Init.Protocol = SAI_FREE_PROTOCOL;
-  haudio_out_sai.Init.DataSize = SAI_DATASIZE_16;
+  haudio_out_sai.Init.DataSize = SAI_DATASIZE_32;
   haudio_out_sai.Init.FirstBit = SAI_FIRSTBIT_MSB;
   haudio_out_sai.Init.ClockStrobing = SAI_CLOCKSTROBING_RISINGEDGE;
   haudio_out_sai.Init.Synchro = SAI_ASYNCHRONOUS;
