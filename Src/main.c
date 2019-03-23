@@ -129,7 +129,7 @@ void GUI_Task ( void const * argument){
 		HAL_SAI_Receive(&haudio_in_sai, dmaBuffer, DMA_BUFFER_LENGTH, 10000);
 		SAIData();
 		GUI_Exec();
-		osDelay(200);
+		osDelay(25);
 	}
 }
 void Signal_Task ( void const * argument){
