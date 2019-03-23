@@ -23,7 +23,7 @@ static GRAPH_DATA_Handle SineData;
 WM_HWIN hItem;
 static int Stop;
 extern int AdcValue;
-extern char dmaBuffer[470];
+extern U16 dmaBuffer[470];
 double Factor;
 int tmpdata;
 /*********************************************************************
@@ -220,7 +220,9 @@ void SAIData(void) {
 		//GRAPH_DATA_XY_Clear(SineData);
 		for(int i=0;i<235;i++){
 			Points[2*i].x=2*i;
-			dmaBuffer[2*i]+=128;
+			dmaBuffer[2*i]+=35536;
+			dmaBuffer[2*i]/=256;
+
 			Points[2*i].y=dmaBuffer[2*i];//(GUI_sin(8.712765957446809*i)*Factor)+131;
 			Points[2*i+1].x=2*i+1;
 			Points[2*i+1].y=dmaBuffer[2*i];

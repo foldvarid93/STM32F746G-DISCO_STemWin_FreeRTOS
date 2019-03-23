@@ -225,6 +225,7 @@ static void SAI_DMARxCplt(DMA_HandleTypeDef *hdma);
 static void SAI_DMARxHalfCplt(DMA_HandleTypeDef *hdma);
 static void SAI_DMAError(DMA_HandleTypeDef *hdma);
 static void SAI_DMAAbort(DMA_HandleTypeDef *hdma);
+extern uint16_t dmaBuffer[470];
 /**
   * @}
   */
@@ -779,8 +780,9 @@ HAL_StatusTypeDef HAL_SAI_Receive(SAI_HandleTypeDef *hsai, uint8_t *pData, uint1
         }
         else if(hsai->Init.DataSize <= SAI_DATASIZE_16)
         {
-          *((uint16_t*)hsai->pBuffPtr) = hsai->Instance->DR;
-          hsai->pBuffPtr+= 2;
+        	dmaBuffer[hsai->XferSize-hsai->XferCount] = hsai->Instance->DR;
+          //*((uint16_t*)hsai->pBuffPtr) = hsai->Instance->DR;
+          //hsai->pBuffPtr+= 2;
         }
         else
         {

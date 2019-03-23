@@ -87,7 +87,7 @@ extern SAI_HandleTypeDef haudio_in_sai;
 int AdcValue;
 double Factor;
 float factor;
-uint8_t dmaBuffer[940];
+uint16_t dmaBuffer[470];
 #define DMA_BUFFER_LENGTH 470
 /* USER CODE END PV */
 
@@ -188,9 +188,8 @@ int main(void) {
 	MX_GPIO_Init();
 	MX_CRC_Init();
 	MX_ADC3_Init();
-	BSP_AUDIO_IN_InitEx(INPUT_DEVICE_INPUT_LINE_1, DEFAULT_AUDIO_IN_FREQ, 30, DEFAULT_AUDIO_IN_CHANNEL_NBR);
+	BSP_AUDIO_IN_InitEx(INPUT_DEVICE_INPUT_LINE_1, DEFAULT_AUDIO_IN_FREQ,85, DEFAULT_AUDIO_IN_CHANNEL_NBR);
 	//BSP_AUDIO_IN_Init(INPUT_DEVICE_INPUT_LINE_1, DEFAULT_AUDIO_IN_VOLUME, DEFAULT_AUDIO_IN_FREQ);
-	HAL_SAI_Receive(&haudio_in_sai, dmaBuffer, DMA_BUFFER_LENGTH, 10000);
 	//BSP_AUDIO_IN_Record(dmaBuffer, DMA_BUFFER_LENGTH);
 	/* USER CODE BEGIN 2 */
 	xTaskCreate ((TaskFunction_t) GUI_Task, "GUI_Task", 1024, NULL, 1, NULL);
