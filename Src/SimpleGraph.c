@@ -235,3 +235,26 @@ void SAIData(void) {
 		//GRAPH_DATA_XY_SetPointVis(SineData, 1);
 		GRAPH_AttachData(hItem, SineData);
 }
+void ADCData(void) {
+	if (Stop) {
+	} else {
+		WM_HWIN hItem;
+		Factor = AdcValue * 0.0000244140625;
+
+		Factor = AdcValue * 0.0000244140625;
+		for (int i = 0; i < 470; i++) {
+			Points[i].x = i;
+			Points[i].y = (GUI_sin(8.712765957446809 * i) * Factor) + 131;
+		}
+		hItem = WM_GetFirstChild(WM_HBKWIN);
+		hItem = WM_GetDialogItem(hItem, ID_GRAPH_0);
+		GRAPH_DetachData(hItem, SineData);
+		GRAPH_DATA_XY_Delete(SineData);
+		//
+		// Create a new one and attach it
+		//
+		SineData = GRAPH_DATA_XY_Create(GUI_GREEN, 470, Points,
+				GUI_COUNTOF(Points));
+		GRAPH_AttachData(hItem, SineData);
+	}
+}

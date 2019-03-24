@@ -96,8 +96,9 @@ void SystemClock_Config(void);
 extern void GRAPHICS_HW_Init(void);
 extern void GRAPHICS_Init(void);
 extern void MainTask(void);
-void NewData(void);
-void SAIData(void);
+extern void NewData(void);
+extern void SAIData(void);
+extern void ADCData(void);
 extern void GRAPHICS_IncTick(void);
 extern void TouchUpdate(void);
 static void TsTimerCallback(void const *n);//static void TimerCallback(TimerHandle_t xTimer);
@@ -125,14 +126,14 @@ void GUI_Task ( void const * argument){
 	osTimerStart(TsTimer, 100);/* Start the TS Timer */
 	while (1) { /* Gui background Task */
 		SAIData();
+		//ADCData();
 		GUI_Exec();
-		osDelay(100);
+		osDelay(10);
 	}
 }
 void Signal_Task ( void const * argument){
 	HAL_SAI_Receive_DMA(&haudio_in_sai, (uint8_t*)dmaBuffer,DMA_BUFFER_LENGTH );
 	while(1){
-		osDelay(25);
 	}
 }
 void FFT_Task ( void const * argument){
