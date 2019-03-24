@@ -175,7 +175,7 @@ void TIM6_DAC_IRQHandler(void)
 
   /* USER CODE END TIM6_DAC_IRQn 1 */
 }
-void AUDIO_IN_SAIx_DMAx_IRQHandler(void)
+void DMA2_Stream7_IRQHandler(void)//AUDIO_IN_SAIx_DMAx_IRQHandler(void)
 {
   HAL_DMA_IRQHandler(haudio_in_sai.hdmarx);
 }

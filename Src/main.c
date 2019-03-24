@@ -123,16 +123,14 @@ void GUI_Task ( void const * argument){
 	osTimerDef(TS_Timer, TsTimerCallback);
 	TsTimer = osTimerCreate(osTimer(TS_Timer), osTimerPeriodic, (void *) 0);
 	osTimerStart(TsTimer, 100);/* Start the TS Timer */
-
 	while (1) { /* Gui background Task */
-		//NewData();
-		HAL_SAI_Receive(&haudio_in_sai, dmaBuffer, DMA_BUFFER_LENGTH, 10000);
 		SAIData();
 		GUI_Exec();
 		osDelay(100);
 	}
 }
 void Signal_Task ( void const * argument){
+	HAL_SAI_Receive_DMA(&haudio_in_sai, (uint8_t*)dmaBuffer,DMA_BUFFER_LENGTH );
 	while(1){
 		osDelay(25);
 	}
@@ -189,8 +187,6 @@ int main(void) {
 	MX_CRC_Init();
 	MX_ADC3_Init();
 	BSP_AUDIO_IN_InitEx(INPUT_DEVICE_INPUT_LINE_1, DEFAULT_AUDIO_IN_FREQ,85, DEFAULT_AUDIO_IN_CHANNEL_NBR);
-	//BSP_AUDIO_IN_Init(INPUT_DEVICE_INPUT_LINE_1, DEFAULT_AUDIO_IN_VOLUME, DEFAULT_AUDIO_IN_FREQ);
-	//BSP_AUDIO_IN_Record(dmaBuffer, DMA_BUFFER_LENGTH);
 	/* USER CODE BEGIN 2 */
 	xTaskCreate ((TaskFunction_t) GUI_Task, "GUI_Task", 1024, NULL, 1, NULL);
 	xTaskCreate ((TaskFunction_t) Signal_Task, "Signal_Task", 1024, NULL, 1, NULL);

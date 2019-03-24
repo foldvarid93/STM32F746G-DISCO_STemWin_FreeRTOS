@@ -780,9 +780,9 @@ HAL_StatusTypeDef HAL_SAI_Receive(SAI_HandleTypeDef *hsai, uint8_t *pData, uint1
         }
         else if(hsai->Init.DataSize <= SAI_DATASIZE_16)
         {
-        	dmaBuffer[hsai->XferSize-hsai->XferCount] = hsai->Instance->DR;
-          //*((uint16_t*)hsai->pBuffPtr) = hsai->Instance->DR;
-          //hsai->pBuffPtr+= 2;
+        	//dmaBuffer[hsai->XferSize-hsai->XferCount] = hsai->Instance->DR;//
+          *((uint16_t*)hsai->pBuffPtr) = hsai->Instance->DR;
+          hsai->pBuffPtr+= 2;
         }
         else
         {
