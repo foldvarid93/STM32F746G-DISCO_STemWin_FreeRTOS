@@ -216,17 +216,14 @@ void NewData(void) {
 	}
 }
 void SAIData(void) {
-		/*Factor = AdcValue * 0.0000244140625;*/
-		//GRAPH_DATA_XY_Clear(SineData);
 		for(int i=0;i<235;i++){
 			Points[2*i].x=2*i;
 			dmaBuffer[2*i]+=35536;
 			dmaBuffer[2*i]/=256;
 
-			Points[2*i].y=dmaBuffer[2*i];//(GUI_sin(8.712765957446809*i)*Factor)+131;
+			Points[2*i].y=dmaBuffer[2*i];
 			Points[2*i+1].x=2*i+1;
 			Points[2*i+1].y=dmaBuffer[2*i];
-			//GRAPH_DATA_XY_AddPoint(SineData,&Points[i]);
 		}
 		hItem = WM_GetFirstChild(WM_HBKWIN);
 		hItem = WM_GetDialogItem(hItem, ID_GRAPH_0);
