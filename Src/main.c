@@ -118,13 +118,13 @@ static void TsTimerCallback(void const *n){
 void vApplicationTickHook(void) {
 	HAL_IncTick();
 }
-void GUI_Task ( void const * argument){
+void GUI_Task ( void const * argument){ /* Gui background Task */
 	GRAPHICS_Init();
 	MainTask();
 	osTimerDef(TS_Timer, TsTimerCallback);
 	TsTimer = osTimerCreate(osTimer(TS_Timer), osTimerPeriodic, (void *) 0);//touchscreen read in timer 100ms periodic
 	osTimerStart(TsTimer, 100);/* Start the TS Timer */
-	while (1) { /* Gui background Task */
+	while (1) {
 		NewData();
 		//SAIData();
 		//ADCData();
@@ -132,19 +132,19 @@ void GUI_Task ( void const * argument){
 		vTaskDelay(10);
 	}
 }
-void Signal_Task ( void const * argument){
+void Signal_Task ( void const * argument){/*Collect sample*/
 	BSP_AUDIO_IN_InitEx(INPUT_DEVICE_INPUT_LINE_1, DEFAULT_AUDIO_IN_FREQ,85, DEFAULT_AUDIO_IN_CHANNEL_NBR);
 	HAL_SAI_Receive_DMA(&haudio_in_sai, (uint8_t*)dmaBuffer,DMA_BUFFER_LENGTH );
 	while(1){
 		vTaskDelay(100);
 	}
 }
-void FFT_Task ( void const * argument){
+void FFT_Task ( void const * argument){/*computing fft*/
 	while(1){
 		vTaskDelay(100);
 	}
 }
-static void ADC_Task(void const * argument) {
+static void ADC_Task(void const * argument) {/*read in analog input(s)*/
 	HAL_ADC_Start(&hadc3);
 	while (1) {
 		if(HAL_ADC_PollForConversion(&hadc3,0)==HAL_OK){
