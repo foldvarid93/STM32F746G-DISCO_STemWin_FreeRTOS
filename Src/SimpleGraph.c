@@ -211,7 +211,7 @@ void NewData(void) {
 		hItem = WM_GetDialogItem(hItem, ID_GRAPH_0);
 		GRAPH_DetachData(hItem, SineData);
 		GRAPH_DATA_XY_Delete(SineData);
-		SineData = GRAPH_DATA_XY_Create(GUI_GREEN, 470, Points,	GUI_COUNTOF(Points));
+		SineData = GRAPH_DATA_XY_Create(GUI_GREEN, GUI_COUNTOF(Points), Points,	GUI_COUNTOF(Points));
 		GRAPH_AttachData(hItem, SineData);
 	}
 }
@@ -229,7 +229,7 @@ void SAIData(void) {
 		hItem = WM_GetDialogItem(hItem, ID_GRAPH_0);
 		GRAPH_DetachData(hItem, SineData);
 		GRAPH_DATA_XY_Delete(SineData);
-		SineData = GRAPH_DATA_XY_Create(GUI_GREEN, 470, Points,	GUI_COUNTOF(Points));
+		SineData = GRAPH_DATA_XY_Create(GUI_GREEN, GUI_COUNTOF(Points), Points,	GUI_COUNTOF(Points));
 		//GRAPH_DATA_XY_SetPenSize(SineData, 2);
 		//GRAPH_DATA_XY_SetLineVis(SineData, 0);
 		//GRAPH_DATA_XY_SetPointVis(SineData, 1);
@@ -250,11 +250,7 @@ void ADCData(void) {
 		hItem = WM_GetDialogItem(hItem, ID_GRAPH_0);
 		GRAPH_DetachData(hItem, SineData);
 		GRAPH_DATA_XY_Delete(SineData);
-		//
-		// Create a new one and attach it
-		//
-		SineData = GRAPH_DATA_XY_Create(GUI_GREEN, 470, Points,
-				GUI_COUNTOF(Points));
+		SineData = GRAPH_DATA_XY_Create(GUI_GREEN, GUI_COUNTOF(Points), Points,GUI_COUNTOF(Points));
 		GRAPH_AttachData(hItem, SineData);
 	}
 }

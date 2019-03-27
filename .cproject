@@ -53,10 +53,10 @@
 									<listOptionValue builtIn="false" value="&quot;../Drivers\Components\ft5336&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../Drivers\Components\rk043fn48h&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;../Utilities\Fonts&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;D:\ARM\STM32F746G-DISCO\F746G-FreeRTOS-STemWin\Middlewares\Third_Party\FreeRTOS\Source\include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;D:\ARM\STM32F746G-DISCO\F746G-FreeRTOS-STemWin\Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM7\r0p1&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;D:\ARM\STM32F746G-DISCO\F746G-FreeRTOS-STemWin\Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;D:\ARM\STM32F746G-DISCO\F746G-FreeRTOS-STemWin\Drivers\Components\wm8994&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../Drivers\Components\wm8994&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../Middlewares\Third_Party\FreeRTOS\Source\CMSIS_RTOS&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../Middlewares\Third_Party\FreeRTOS\Source\portable\GCC\ARM_CM7\r0p1&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;../Middlewares\Third_Party\FreeRTOS\Source\include&quot;"/>
 								</option>
 								<option id="com.atollic.truestudio.gcc.symbols.defined.1670122205" name="Defined symbols" superClass="com.atollic.truestudio.gcc.symbols.defined" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="__weak=__attribute__((weak))"/>

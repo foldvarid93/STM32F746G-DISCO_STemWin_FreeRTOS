@@ -116,29 +116,32 @@ static void TsTimerCallback(void const *n){
 	TouchUpdate();
 }
 void vApplicationTickHook(void) {
-	//HAL_IncTick();
+	HAL_IncTick();
 }
 void GUI_Task ( void const * argument){
 	GRAPHICS_Init();
 	MainTask();
 	osTimerDef(TS_Timer, TsTimerCallback);
-	TsTimer = osTimerCreate(osTimer(TS_Timer), osTimerPeriodic, (void *) 0);
+	TsTimer = osTimerCreate(osTimer(TS_Timer), osTimerPeriodic, (void *) 0);//touchscreen read in timer 100ms periodic
 	osTimerStart(TsTimer, 100);/* Start the TS Timer */
 	while (1) { /* Gui background Task */
-		SAIData();
+		NewData();
+		//SAIData();
 		//ADCData();
 		GUI_Exec();
-		osDelay(10);
+		vTaskDelay(10);
 	}
 }
 void Signal_Task ( void const * argument){
+	BSP_AUDIO_IN_InitEx(INPUT_DEVICE_INPUT_LINE_1, DEFAULT_AUDIO_IN_FREQ,85, DEFAULT_AUDIO_IN_CHANNEL_NBR);
 	HAL_SAI_Receive_DMA(&haudio_in_sai, (uint8_t*)dmaBuffer,DMA_BUFFER_LENGTH );
 	while(1){
+		vTaskDelay(100);
 	}
 }
 void FFT_Task ( void const * argument){
 	while(1){
-		osDelay(25);
+		vTaskDelay(100);
 	}
 }
 static void ADC_Task(void const * argument) {
@@ -148,7 +151,7 @@ static void ADC_Task(void const * argument) {
 			AdcValue=HAL_ADC_GetValue(&hadc3);
 		}
 		HAL_ADC_Start(&hadc3);
-		osDelay(50);
+		vTaskDelay(50);
 	}
 }
 //
@@ -187,7 +190,6 @@ int main(void) {
 	MX_GPIO_Init();
 	MX_CRC_Init();
 	MX_ADC3_Init();
-	BSP_AUDIO_IN_InitEx(INPUT_DEVICE_INPUT_LINE_1, DEFAULT_AUDIO_IN_FREQ,85, DEFAULT_AUDIO_IN_CHANNEL_NBR);
 	/* USER CODE BEGIN 2 */
 	xTaskCreate ((TaskFunction_t) GUI_Task, "GUI_Task", 1024, NULL, 1, NULL);
 	xTaskCreate ((TaskFunction_t) Signal_Task, "Signal_Task", 1024, NULL, 1, NULL);
@@ -197,9 +199,6 @@ int main(void) {
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
-	while(1){
-		asm("nop");
-	}
 }
 /**
  * @brief System Clock Configuration
@@ -266,7 +265,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 
 	/* USER CODE END Callback 0 */
 	if (htim->Instance == TIM6) {
-		HAL_IncTick();
+		//HAL_IncTick();
 	}
 	/* USER CODE BEGIN Callback 1 */
 
