@@ -113,7 +113,7 @@ static void ADC_Task(void const * argument);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 static void TsTimerCallback(void const *n){
-	TouchUpdate();
+	//TouchUpdate();
 }
 void vApplicationTickHook(void) {
 	HAL_IncTick();
@@ -125,8 +125,8 @@ void GUI_Task ( void const * argument){ /* Gui background Task */
 	TsTimer = osTimerCreate(osTimer(TS_Timer), osTimerPeriodic, (void *) 0);//touchscreen read in timer 100ms periodic
 	osTimerStart(TsTimer, 100);/* Start the TS Timer */
 	while (1) {
-		NewData();
-		//SAIData();
+		//NewData();
+		SAIData();
 		//ADCData();
 		GUI_Exec();
 		vTaskDelay(10);

@@ -844,8 +844,7 @@ void DMA2D_Init(void) {
 void GRAPHICS_Init(void) {
 	MX_FMC_Init();
 	BSP_SDRAM_Init();
-#if   GUI_SUPPORT_TOUCH//if touch supported
-	//TS_IO_Init();
+#if   GUI_SUPPORT_TOUCH
 	if (BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize()) != TS_OK) {
 		while (1);
 	}

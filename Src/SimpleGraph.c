@@ -37,9 +37,8 @@ int tmpdata;
  *       _aDialogCreate
  */
 static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
-		{ WINDOW_CreateIndirect, "Window", ID_WINDOW_0, 0, 0, 480, 272, 0, 0x0,
-				0 }, { GRAPH_CreateIndirect, "Graph", ID_GRAPH_0, 5, 5, 470,
-				262, 0, 0x0, 0 },
+		{ WINDOW_CreateIndirect, "Window", ID_WINDOW_0, 0, 0, 480, 272, 0, 0x0,0 },
+		{ GRAPH_CreateIndirect, "Graph", ID_GRAPH_0, 0, 0, 480, 272, 0, 0x0, 0 },
 // USER START (Optionally insert additional widgets)
 // USER END
 		};
